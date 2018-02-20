@@ -1,7 +1,7 @@
 Class Main {
     main() : Object {
-        (let io : IO <- new IO in {
-            io.out_string("Hello, World! \n");
+        (let logger : Logger <- new Logger in {
+            logger.log("Hello, World!");
         })
     };
 };
