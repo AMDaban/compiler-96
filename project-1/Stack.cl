@@ -34,16 +34,18 @@ Class Stack {
         })
     };
 
-    pop() : Stack {
+    pop() : String {
         if(size = 0)
         then {
             logger.log("Error in pop() method: stack is empty");
             abort();
-            self;
+            "";
         } else {
-            firstNode <- firstNode.next();
-            size <- size - 1;
-            self;
+            (let commandToPop : String <-head() in {
+                firstNode <- firstNode.next();
+                size <- size - 1;
+                commandToPop;
+            });
         }
         fi
     };

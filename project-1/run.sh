@@ -1,0 +1,1 @@
+coolc main.cl Logger.cl StackItem.cl Stack.cl StackMachine.cl Scanner.cl Command.cl IntegerHelper.cl && spim main.s
