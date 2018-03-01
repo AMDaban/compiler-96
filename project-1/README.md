@@ -4,7 +4,8 @@
   you can find project definition [here](http://mmojtahedi.ir/images/courses/compilers/spring-97/asn1.pdf) .
 
 ## Run
-  you can run this project by execute this line: <br />
-  ``` coolc main.cl Logger.cl StackItem.cl Stack.cl StackMachine.cl Scanner.cl Command.cl IntegerHelper.cl && spim main.s ```
-  
-  or simply run the project_1/run.sh 
+  you can run this project in two steps: <br />
+  step 1 (compile all files and create an executable file): <br />
+  ``` coolc main.cl Logger.cl StackItem.cl Stack.cl StackMachine.cl Scanner.cl Command.cl IntegerHelper.cl``` <br />
+  step 2 (run the executable file): <br /> 
+  ``` spim main.s ``` <br />
