@@ -8,3 +8,4 @@ Class Main {
     (* (*salam*) *)
 };
 --salam aslam
+"asdasdsdasd"

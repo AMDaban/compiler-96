@@ -44,6 +44,7 @@ extern YYSTYPE cool_yylval;
  */
 
 int commentDepth = 0;
+int stringLength = 0;
 %}
 
 /*
@@ -55,7 +56,7 @@ LE_TOKEN        <=
 ASSIGN_TOKEN    <-
 DIGIT           [0-9]
 
-%x STR COMMENT
+%x STR COMMENT BRSTRING
 %%
 
 <COMMENT>{
@@ -253,6 +254,13 @@ f(?i:alse)  {
             }
 
  /*
+  * Begin of a String
+  */
+\"  { 
+      BEGIN(STR);
+    }
+
+ /*
   * Integers
   * Simply store matched integer in the Table
   */
@@ -301,7 +309,7 @@ f(?i:alse)  {
   */
 . {
     char *buf = (char*)malloc(64);
-    sprintf(buf, "Unexpected token: '%s'", yytext);
+    sprintf(buf, "%s", yytext);
     cool_yylval.error_msg = buf;
     return ERROR;
   }
@@ -315,6 +323,178 @@ f(?i:alse)  {
   *  \n \t \b \f, the result is c.
   *
   */
+
+
+ /*
+  * End of String
+  */
+  \"  { 
+        // Save String in String Table
+        cool_yylval.symbol = stringtable.add_string(string_buf);
+
+        //emptying buffer
+        stringLength = 0;
+        string_buf[0] = '\0';
+
+        BEGIN(INITIAL);
+        return(STR_CONST);
+      }
+
+ /*
+  * String contains null character
+  */
+(\0|\\\0) {
+            cool_yylval.error_msg = "String contains null character";
+            BEGIN(BRSTRING);
+            return(ERROR);
+          }
+
+
+ /*
+  * Escaped new line
+  */
+\\\n  {   
+        if (stringLength + 1 >= MAX_STR_CONST){
+          BEGIN(BRSTRING);
+          
+          //emptying buffer
+          stringLength = 0;
+          string_buf[0] = '\0';
+
+          cool_yylval.error_msg = "String constant too long";
+          return ERROR;
+        }
+
+        curr_lineno++; 
+        strcat(string_buf, "\n");
+        stringLength++;
+      }
+
+ /*
+  * Unescaped new line
+  */
+\n  {   
+      curr_lineno++; 
+      BEGIN(INITIAL);
+
+      //emptying buffer
+      stringLength = 0;
+      string_buf[0] = '\0';
+
+      cool_yylval.error_msg = "Unterminated string constant";
+      return(ERROR);
+    }
+
+<<EOF>> {   
+          BEGIN(INITIAL);
+          cool_yylval.error_msg = "EOF in string constant";
+          return(ERROR);
+        }
+
+\\n { 
+      if (stringLength + 1 >= MAX_STR_CONST){
+        BEGIN(BRSTRING);
+        
+        //emptying buffer
+        stringLength = 0;
+        string_buf[0] = '\0';
+
+        cool_yylval.error_msg = "String constant too long";
+        return ERROR;
+      }
+
+      curr_lineno++; 
+      strcat(string_buf, "\n");
+    }
+
+\\t {
+      if (stringLength + 1 >= MAX_STR_CONST){
+        BEGIN(BRSTRING);
+        
+        //emptying buffer
+        stringLength = 0;
+        string_buf[0] = '\0';
+
+        cool_yylval.error_msg = "String constant too long";
+        return ERROR;
+      }
+
+      stringLength++;
+      strcat(string_buf, "\t");
+    }
+
+\\b {
+      if (stringLength + 1 >= MAX_STR_CONST){
+        BEGIN(BRSTRING);
+        
+        //emptying buffer
+        stringLength = 0;
+        string_buf[0] = '\0';
+
+        cool_yylval.error_msg = "String constant too long";
+        return ERROR;
+      }
+
+      stringLength++;
+      strcat(string_buf, "\b");
+    }
+
+\\f {
+      if (stringLength + 1 >= MAX_STR_CONST){
+        BEGIN(BRSTRING);
+        
+        //emptying buffer
+        stringLength = 0;
+        string_buf[0] = '\0';
+
+        cool_yylval.error_msg = "String constant too long";
+        return ERROR;
+      }
+
+      stringLength++;
+      strcat(string_buf, "\f");
+    }
+
+\\. {
+      if (stringLength + 1 >= MAX_STR_CONST){
+        BEGIN(BRSTRING);
+        
+        //emptying buffer
+        stringLength = 0;
+        string_buf[0] = '\0';
+
+        cool_yylval.error_msg = "String constant too long";
+        return ERROR;
+      }
+
+      stringLength++;
+      strcat(string_buf, &strdup(yytext)[1]);
+    }
+
+. {   
+    if (stringLength + 1 >= MAX_STR_CONST){
+        BEGIN(BRSTRING);
+        
+        //emptying buffer
+        stringLength = 0;
+        string_buf[0] = '\0';
+
+        cool_yylval.error_msg = "String constant too long";
+        return ERROR;
+    }
+
+    strcat(string_buf, yytext);
+    stringLength++;
+  }
+
 }
+
+
+ /*
+  * In case of brokenString eats up rest of string
+  */
+<BRSTRING>.*[\"\n]  {
+                        BEGIN(INITIAL);
+                    }
 
 %%
