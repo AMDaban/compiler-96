@@ -43,6 +43,7 @@ extern YYSTYPE cool_yylval;
  *  Add Your own definitions here
  */
 
+int commentDepth = 0;
 %}
 
 /*
@@ -61,10 +62,69 @@ DIGIT           [0-9]
  /*
   *  Nested comments
   */
+ 
+ /*
+  *  Nested comment found...
+  */
+"(*" {
+      commentDepth++;
+      BEGIN(COMMENT); 
+    }
+
+ /*
+  *  Start of a comment
+  */
+\n  {
+      ++curr_lineno;
+    }
+
+ /*
+  *  End of one comment
+  */
+"*)"  {   
+        commentDepth--;
+        if (commentDepth == 0) {
+          BEGIN(INITIAL);
+        } 
+      }
+
+ /*
+  *  Error: EOF in comment
+  */
+<<EOF>> {
+          BEGIN(INITIAL); 
+          cool_yylval.error_msg = "EOF in comment";
+          return(ERROR);
+        }
+
+ /*
+  *  Eat up every thing else
+  */
+. {}
 
 }
 
 <INITIAL>{
+
+ /*
+  *  Start of a comment
+  */
+"(*" {
+      commentDepth++;
+      BEGIN(COMMENT); 
+    }
+
+ /*
+  *  Two below rules eat up one line comments
+  */
+"--".*\n  {
+            curr_lineno++;
+          }
+
+"--".*  {
+          curr_lineno++;
+        }
+
  /*
   *  The multiple-character operators.
   */
