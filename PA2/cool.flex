@@ -265,7 +265,7 @@ f(?i:alse)  {
   * Simply store matched integer in the Table
   */
 {DIGIT}+  {
-            cool_yylval.symbol = inttable.add_int(atoi(yytext));
+            cool_yylval.symbol = inttable.add_string(yytext);
             return (INT_CONST);
           }
 
