@@ -265,7 +265,7 @@ f(?i:alse)  {
   * Simply store matched integer in the Table
   */
 {DIGIT}+  {
-            cool_yylval.symbol = stringtable.add_int(atoi(yytext));
+            cool_yylval.symbol = inttable.add_int(atoi(yytext));
             return (INT_CONST);
           }
 
@@ -345,6 +345,11 @@ f(?i:alse)  {
   */
 (\0|\\\0) {
             cool_yylval.error_msg = "String contains null character";
+
+            //emptying buffer
+            stringLength = 0;
+            string_buf[0] = '\0';
+
             BEGIN(BRSTRING);
             return(ERROR);
           }
@@ -403,8 +408,8 @@ f(?i:alse)  {
         return ERROR;
       }
 
-      curr_lineno++; 
       strcat(string_buf, "\n");
+      stringLength++;
     }
 
 \\t {
@@ -493,8 +498,13 @@ f(?i:alse)  {
  /*
   * In case of brokenString eats up rest of string
   */
-<BRSTRING>.*[\"\n]  {
+<BRSTRING>[^\n\"]*\"  {
                         BEGIN(INITIAL);
-                    }
+                      }
+
+<BRSTRING>[^\n\"]*\n  {
+                        curr_lineno++;
+                        BEGIN(INITIAL);
+                      }
 
 %%
