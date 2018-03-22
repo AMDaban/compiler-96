@@ -318,14 +318,6 @@ f(?i:alse)  {
 
 <STR>{
  /*
-  *  String constants (C syntax)
-  *  Escape sequence \c is accepted for all characters c. Except for 
-  *  \n \t \b \f, the result is c.
-  *
-  */
-
-
- /*
   * End of String
   */
   \"  { 
@@ -390,12 +382,22 @@ f(?i:alse)  {
       return(ERROR);
     }
 
+
+ /*
+  * EOF in String
+  */
 <<EOF>> {   
           BEGIN(INITIAL);
           cool_yylval.error_msg = "EOF in string constant";
           return(ERROR);
         }
 
+ /*
+  *  String constants (C syntax)
+  *  Escape sequence \c is accepted for all characters c. Except for 
+  *  \n \t \b \f, the result is c.
+  *
+  */
 \\n { 
       if (stringLength + 1 >= MAX_STR_CONST){
         BEGIN(BRSTRING);
@@ -496,7 +498,7 @@ f(?i:alse)  {
 
 
  /*
-  * In case of brokenString eats up rest of string
+  * In case of brokenString eats up rest of string( if we have very long String or Null in String )
   */
 <BRSTRING>[^\n\"]*\"  {
                         BEGIN(INITIAL);
