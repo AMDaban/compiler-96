@@ -106,3 +106,24 @@ Instructions
 Write-up for PA2
 ----------------
 
+	For this phase of the project we have created a PA2 directory in the root 
+	of the project(compiler-96 folder). In that directory, a folder exists
+	that we wrote 4 scripts in it(PA2/scripts) : 
+
+	make-lexer: simply makes the lexer in class/assignment/PA2:
+		% source PA2/scripts/make-lexer.sh
+
+	lexer: simply runs the lexer with an input file:
+		% source PA2/scripts/lexer.sh $FILE_PATH
+
+	mycoolc: simply runc coolc with our lexer:
+		% source PA2/scripts/mycoolc.sh $FILE_PATH
+
+	grading: simply checks if our lexer works correctly
+		% source PA2/scripts/grading.sh
+
+	Other files in the PA2 folder are cool.flex, README, test.cl. these files
+	exactly work the same as files in class/assignment/PA2.
+
+	The explains of design decisions have written in cool.flex as comments.
+
