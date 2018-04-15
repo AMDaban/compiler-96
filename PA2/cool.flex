@@ -122,9 +122,7 @@ DIGIT           [0-9]
             curr_lineno++;
           }
 
-"--".*  {
-          curr_lineno++;
-        }
+"--".*  {}
 
  /*
   *  The multiple-character operators.
@@ -278,7 +276,7 @@ f(?i:alse)  {
   * TypeIDs must start with a capital letter
   */ 
 [A-Z][a-zA-Z0-9_]*  { 
-                      cool_yylval.symbol = stringtable.add_string(yytext);
+                      cool_yylval.symbol = idtable.add_string(yytext);
                       return (TYPEID);
                     }
 
@@ -287,7 +285,7 @@ f(?i:alse)  {
   * ObjectIDs must start with a non-capital letter
   */
 [a-z][a-zA-Z0-9_]*  { 
-                      cool_yylval.symbol = stringtable.add_string(yytext);
+                      cool_yylval.symbol = idtable.add_string(yytext);
                       return (OBJECTID);
                     }
 
