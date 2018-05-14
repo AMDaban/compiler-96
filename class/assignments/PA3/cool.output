@@ -37,7 +37,7 @@ Grammar
     4 class: CLASS TYPEID '{' dummy_feature_list '}' ';'
     5      | CLASS TYPEID INHERITS TYPEID '{' dummy_feature_list '}' ';'
 
-    6 dummy_feature_list: /* empty */
+    6 dummy_feature_list: %empty
 
 
 Terminals, with rules where they appear
@@ -89,7 +89,7 @@ dummy_feature_list (36)
     on left: 6, on right: 4 5
 
 
-state 0
+State 0
 
     0 $accept: . program $end
 
@@ -100,7 +100,7 @@ state 0
     class       go to state 4
 
 
-state 1
+State 1
 
     4 class: CLASS . TYPEID '{' dummy_feature_list '}' ';'
     5      | CLASS . TYPEID INHERITS TYPEID '{' dummy_feature_list '}' ';'
@@ -108,14 +108,14 @@ state 1
     TYPEID  shift, and go to state 5
 
 
-state 2
+State 2
 
     0 $accept: program . $end
 
     $end  shift, and go to state 6
 
 
-state 3
+State 3
 
     1 program: class_list .
     3 class_list: class_list . class
@@ -127,14 +127,14 @@ state 3
     class  go to state 7
 
 
-state 4
+State 4
 
     2 class_list: class .
 
     $default  reduce using rule 2 (class_list)
 
 
-state 5
+State 5
 
     4 class: CLASS TYPEID . '{' dummy_feature_list '}' ';'
     5      | CLASS TYPEID . INHERITS TYPEID '{' dummy_feature_list '}' ';'
@@ -143,28 +143,28 @@ state 5
     '{'       shift, and go to state 9
 
 
-state 6
+State 6
 
     0 $accept: program $end .
 
     $default  accept
 
 
-state 7
+State 7
 
     3 class_list: class_list class .
 
     $default  reduce using rule 3 (class_list)
 
 
-state 8
+State 8
 
     5 class: CLASS TYPEID INHERITS . TYPEID '{' dummy_feature_list '}' ';'
 
     TYPEID  shift, and go to state 10
 
 
-state 9
+State 9
 
     4 class: CLASS TYPEID '{' . dummy_feature_list '}' ';'
 
@@ -173,21 +173,21 @@ state 9
     dummy_feature_list  go to state 11
 
 
-state 10
+State 10
 
     5 class: CLASS TYPEID INHERITS TYPEID . '{' dummy_feature_list '}' ';'
 
     '{'  shift, and go to state 12
 
 
-state 11
+State 11
 
     4 class: CLASS TYPEID '{' dummy_feature_list . '}' ';'
 
     '}'  shift, and go to state 13
 
 
-state 12
+State 12
 
     5 class: CLASS TYPEID INHERITS TYPEID '{' . dummy_feature_list '}' ';'
 
@@ -196,35 +196,35 @@ state 12
     dummy_feature_list  go to state 14
 
 
-state 13
+State 13
 
     4 class: CLASS TYPEID '{' dummy_feature_list '}' . ';'
 
     ';'  shift, and go to state 15
 
 
-state 14
+State 14
 
     5 class: CLASS TYPEID INHERITS TYPEID '{' dummy_feature_list . '}' ';'
 
     '}'  shift, and go to state 16
 
 
-state 15
+State 15
 
     4 class: CLASS TYPEID '{' dummy_feature_list '}' ';' .
 
     $default  reduce using rule 4 (class)
 
 
-state 16
+State 16
 
     5 class: CLASS TYPEID INHERITS TYPEID '{' dummy_feature_list '}' . ';'
 
     ';'  shift, and go to state 17
 
 
-state 17
+State 17
 
     5 class: CLASS TYPEID INHERITS TYPEID '{' dummy_feature_list '}' ';' .
 
