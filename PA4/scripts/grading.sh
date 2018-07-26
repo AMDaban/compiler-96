@@ -7,7 +7,7 @@ do
     CUR_DIR=${PWD##*/}
 done
 
-sudo cp PA4/grader.pl class/assignments/PA4
+sudo cp PA4/scripts/grader.pl class/assignments/PA4
 
 cd class/assignments/PA4
 sudo perl grader.pl

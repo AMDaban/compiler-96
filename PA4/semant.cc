@@ -253,7 +253,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 
 	if ( !root)
 	{
-		// Find bug: No root !
+		// this should not happen, so if it happen it's a bug
 		semant_error() << "BUG: Could not find object class." << endl;
 		return;
 	}
@@ -270,7 +270,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 		}
 		else
 		{
-			// Find error: Redefinition of class
+			// Redefinition of class Error
 			semant_error( cur) << "Redefinition of Class " << cur->get_name() << endl;
 			return;
 		}
@@ -296,7 +296,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 
 		if ( !ct_node->set_father( father_node))
 		{
-			// Find error: cur could not be a subclass of father node.
+			// Circle in Class inheritance tree
 			semant_error( cur) << "Find inherit circle of Class " << cur->get_name()
 				<< " and Class " << cur->get_parent_name() << endl;
 			return;
@@ -520,29 +520,14 @@ bool class_tree_node_type::walk_down()
 	::Current_type = this;
 	::filename = contain->get_filename();
 
-	/*
-	cout << "Checking Class " << this->defined()->contain->get_name() << endl;
-	*/
 	var_table->enterscope();
 	var_table->addid( self, Self_type);
-
-	/*
-	cout << "Var table:" << endl;
-	var_table->dump();
-
-	cout << "Method table:" << endl;
-	this->method_table.dump();
-	*/
 
 	if ( is_defined())
 	{
 		this->contain->check_Class_Types();
 	}
-	else
-	{
-		// Find an undefined class.
-		// Will be reported later.
-	}
+	
 
 	bool ret = true;
 	class_tree_node leg = this->son;
@@ -579,8 +564,8 @@ void program_class::semant()
     /* some semantic analysis code may go here */
 
     if (classtable->errors()) {
-	cerr << "Compilation halted due to static semantic errors." << endl;
-	exit(1);
+		cerr << "Compilation halted due to static semantic errors." << endl;
+		exit(1);
     }
 }
 
@@ -617,12 +602,7 @@ bool class__class::check_Class_Types()
 		Feature ft = features->nth( i);
 		ft->install_Feature_Types();
 	}
-
-	/*
-	cout << "Var table: " << endl;
-	var_table->dump();
-	cout << "Checking " << name << " Begins." << endl;
-	*/
+	
 	for ( int i = features->first(); features->more( i); i = features->next( i))
 	{
 		Feature ft = features->nth( i);
@@ -633,9 +613,6 @@ bool class__class::check_Class_Types()
 			// For methods, the same thing happens.
 		}
 	}
-	/*
-	cout << "Checking " << name << " Done." << endl;
-	*/
 
 	return true;
 }
@@ -678,10 +655,7 @@ bool method_class::check_Feature_Types()
 	}
 
 	var_table->enterscope();
-	/*
-	class_table->dump();
-	cout << "Checking method " << name << endl;
-	*/
+	
 	for ( int i = formals->first(); formals->more( i); i = formals->next( i))
 	{
 		Formal fm = formals->nth( i);
@@ -698,9 +672,6 @@ bool method_class::check_Feature_Types()
 	Type type = feature_type;
 	Type body_type = expr->get_Expr_Type();
 
-	/*
-	cout << "Checking method " << name << " done." << endl;
-	*/
 	var_table->exitscope();
 
 	if ( type)
